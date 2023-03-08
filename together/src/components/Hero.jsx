@@ -14,7 +14,7 @@ const Hero = () => {
           quo ipsam deleniti vero nihil similique eius?
         </p>
         <Link to="/create-campaign" className="mt-4 md:mt-6">
-          <Button name="Create Campaign" color="green" />
+          <Button name="Create Campaign" />
         </Link>
       </div>
       <div className="w-72 md:w-full">

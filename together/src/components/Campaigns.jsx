@@ -6,7 +6,7 @@ import CampaignCard from "./CampaignCard";
 const CampaignSection = () => {
   let campaigns = [
     {
-      id: 1,
+      unique_id: 1,
       campaignTitle: "Title 1",
       campaignDesc:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
@@ -15,7 +15,7 @@ const CampaignSection = () => {
       campaignTarget: 11.99,
     },
     {
-      id: 2,
+      unique_id: 2,
       campaignTitle: "Title 2",
       campaignDesc:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
@@ -24,7 +24,7 @@ const CampaignSection = () => {
       campaignTarget: 11.99,
     },
     {
-      id: 3,
+      unique_id: 3,
       campaignTitle: "Title 3",
       campaignDesc:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
@@ -33,53 +33,8 @@ const CampaignSection = () => {
       campaignTarget: 11.99,
     },
     {
-      id: 4,
-      campaignTitle: "Title 4",
-      campaignDesc:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
-      campaignToAddress: "0xJHSAD989asdaSADAx7",
-      campaignRaisedAmt: 3.12,
-      campaignTarget: 11.99,
-    },
-    {
-      id: 5,
-      campaignTitle: "Title 5",
-      campaignDesc:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
-      campaignToAddress: "0xJHSAD989asdaSADAx7",
-      campaignRaisedAmt: 3.12,
-      campaignTarget: 11.99,
-    },
-    {
-      id: 6,
-      campaignTitle: "Title 6",
-      campaignDesc:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
-      campaignToAddress: "0xJHSAD989asdaSADAx7",
-      campaignRaisedAmt: 3.12,
-      campaignTarget: 11.99,
-    },
-    {
-      id: 7,
-      campaignTitle: "Title 7",
-      campaignDesc:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
-      campaignToAddress: "0xJHSAD989asdaSADAx7",
-      campaignRaisedAmt: 3.12,
-      campaignTarget: 11.99,
-    },
-    {
-      id: 8,
-      campaignTitle: "Title 8",
-      campaignDesc:
-        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
-      campaignToAddress: "0xJHSAD989asdaSADAx7",
-      campaignRaisedAmt: 3.12,
-      campaignTarget: 11.99,
-    },
-    {
-      id: 9,
-      campaignTitle: "Title 9",
+      unique_id: 4,
+      campaignTitle: "Title 3",
       campaignDesc:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae voluptatum quae culpa exercitationem illum, placeat ullam facere, iure quo ipsam deleniti vero nihil similique eius?",
       campaignToAddress: "0xJHSAD989asdaSADAx7",
@@ -95,7 +50,7 @@ const CampaignSection = () => {
       </h1>
       <div className="flex flex-col md:grid grid-cols-3 gap-4 mb-20">
         {campaigns.map((item) => {
-          return <CampaignCard key={item.id} item={item} />;
+          return <CampaignCard key={item.unique_id} item={item} />;
         })}
       </div>
     </div>

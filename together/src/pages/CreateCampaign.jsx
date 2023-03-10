@@ -42,6 +42,19 @@ const Campaigns = () => {
       .deploy({ data: bytecode.object, arguments: deployArgs })
       .send({ from: mainAccount, gas: 1000000 });
 
+    const response = await fetch("http://localhost:3001/createCampaign", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      console.error("Error:", response.statusText);
+      return;
+    }
+
     // contract = new web3.eth.Contract(abi);
     // const contractInstance = contract.at(allAccounts[1]);
 

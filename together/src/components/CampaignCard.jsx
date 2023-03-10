@@ -9,7 +9,7 @@ const CampaignCard = (props) => {
 
   return (
     <div>
-      <Link to={"/campaign-details/" + item.unique_id}>
+      <Link to={"/campaign-details/" + item.id}>
         <div className="rounded overflow-hidden shadow-lg">
           <img
             className="w-full"
@@ -18,7 +18,7 @@ const CampaignCard = (props) => {
           />
           <div className="px-6 py-4">
             <div className="font-bold text-md">
-              Campaign {item.campaignTitle}
+              Campaign {item.campaignname}
             </div>
             <div className="font-bold mb-2">
               by <small>{item.campaignToAddress}</small>
@@ -29,8 +29,8 @@ const CampaignCard = (props) => {
                 {ethToRupeeGen(item.campaignRaisedAmt)})
               </p>
               <p className="text-gray-700 text-xs font-bold">
-                target of {item.campaignTarget} ETH (Rs.
-                {ethToRupeeGen(item.campaignTarget)})
+                target of {item.targetamt} ETH (Rs.
+                {ethToRupeeGen(item.targetamt)})
               </p>
             </div>
           </div>

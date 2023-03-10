@@ -16,23 +16,60 @@ const CampaignDetails = () => {
   const bytecode = BYTECODE;
 
   const [contributeAmt, setContributeAmt] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = {
-      contributeAmt,
-    };
-    console.log(data);
 
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://127.0.0.1:7545")
     );
-    let contract = new web3.eth.Contract(abi);
-    let allAccounts = await web3.eth.getAccounts();
-    let mainAccount = allAccounts[0];
-    let deployArgs = [mainAccount, 10000, deadline]; // account, goal, timestamp
-    contract
-      .deploy({ data: bytecode.object, arguments: deployArgs })
-      .send({ from: mainAccount, gas: 1000000 });
+    const contract = new web3.eth.Contract(
+      abi,
+      "0x0CA2b1f582dc9cb0ecDe33878b7e6a5d38236Ae8"
+    );
+    const accounts = await web3.eth.getAccounts();
+    const mainAccount = accounts[0];
+
+    const value = web3.utils.toWei(contributeAmt, "ether");
+    const txObject = {
+      from: mainAccount,
+      to: "0x0CA2b1f582dc9cb0ecDe33878b7e6a5d38236Ae8",
+      value: value,
+    };
+
+    try {
+      const tx = await contract.methods.contribute().send(txObject);
+      console.log(tx);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Integration of refund
+  const handleRefund = async (e) => {
+    e.preventDefault();
+    console.log("handleRefund called");
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://127.0.0.1:7545")
+    );
+    const contract = new web3.eth.Contract(
+      abi,
+      "0xE8D3BE25b770e03797569715A745ab4Cb8877338"
+    );
+    const accounts = await web3.eth.getAccounts();
+    const mainAccount = accounts[0];
+
+    const txObject = {
+      from: "0xE8D3BE25b770e03797569715A745ab4Cb8877338",
+      to: "0x8B507FA134aec4920Ec89d030d8e478dc781643F",
+    };
+
+    try {
+      const tx = await contract.methods.refund().send(txObject);
+      console.log(tx);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -96,7 +133,7 @@ const CampaignDetails = () => {
           <div className="px-6 py-4">
             <div className="font-bold text-xl">Request refund</div>
             <div className="mt-2">
-              <Button name="Refund" />
+              <Button name="Refund" onClick={handleRefund} />
             </div>
           </div>
         </div>

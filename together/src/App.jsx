@@ -10,7 +10,7 @@ import Footer from "./components/Footer";
 
 const App = () => {
   return (
-    <div className="max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl mx-auto my-5 md:my-12">
+    <div className="max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-6xl mx-auto my-5 md:my-12">
       <Navbar />
       <SideBar />
       <Routes>

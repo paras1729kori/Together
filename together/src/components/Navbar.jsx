@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
 import Web3 from "web3";
 
 import logo from "../assets/together.png";
@@ -10,20 +9,35 @@ import Button from "../components/Button";
 
 const Navbar = () => {
   const [web3Provider, setWeb3Provider] = useState(null);
-  const connectWallet = async () => {
-    return new Promise(async (resolve, reject) => {
-      const web3 = new Web3(window.ethereum);
 
-      try {
-        const provider = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setWeb3Provider(provider);
-        resolve(web3);
-      } catch (err) {
-        reject(err);
-      }
-    });
+  const checkMetaMaskInstalled = async () => {
+    alert("Install Metamask...");
+    const provider = window.ethereum;
+    if (typeof provider !== "undefined" && provider.isMetaMask) {
+      return true;
+    }
+    return false;
+  };
+
+  const connectWallet = async () => {
+    const isMetaMaskInstalled = await checkMetaMaskInstalled();
+    if (isMetaMaskInstalled) {
+      return new Promise(async (resolve, reject) => {
+        const web3 = new Web3(window.ethereum);
+
+        try {
+          const provider = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          setWeb3Provider(provider);
+          resolve(web3);
+        } catch (err) {
+          reject(err);
+        }
+      });
+    } else {
+      window.location.href = "https://metamask.io/download.html";
+    }
   };
 
   return (

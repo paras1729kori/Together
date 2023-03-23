@@ -15,7 +15,6 @@ app.use(
     extended: true,
   })
 );
-
 app.use(function (req, res, next) {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -27,26 +26,8 @@ app.use(function (req, res, next) {
 });
 
 app.get("/", db.getCampaigns);
+app.get("/campaign-details/:id", db.getCampaignById);
 app.post("/createCampaign", db.createCampaign);
-// app.get("/", (req, res) => {
-//   db.getCampaigns()
-//     .then((response) => {
-//       res.status(200).send(response);
-//     })
-//     .catch((error) => {
-//       res.status(500).send(error);
-//     });
-// });
-
-// app.post("/createCampaign", (req, res) => {
-//   db.createCampaign()
-//     .then((response) => {
-//       res.status(200).send(response);
-//     })
-//     .catch((error) => {
-//       res.status(500).send(error);
-//     });
-// });
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

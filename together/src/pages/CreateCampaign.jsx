@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import Web3 from "web3";
 import Button from "../components/Button";
 import { ABI } from "../../../contract/ABI.js";
 import { BYTECODE } from "../../../contract/bytecode.js";
+// import { AuthContext } from "../context/AuthContext";
 
 const Campaigns = () => {
   const [deadline, setDeadline] = useState(0);
@@ -12,6 +13,11 @@ const Campaigns = () => {
   const [campaignDesc, setCampaignDesc] = useState("");
   const [imgUrl, setImgUrl] = useState("");
   const [targetAmt, setTargetAmt] = useState(0);
+  const [creatorAddress, setCreatorAdd] = useState("");
+  let contractAdd = "";
+  // const { address } = useContext(AuthContext);
+  // console.log(address, "Create Campaign");
+  // console.log(typeof address);
 
   // contract code
   const abi = ABI;
@@ -19,6 +25,22 @@ const Campaigns = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const web3 = new Web3(
+      new Web3.providers.HttpProvider("http://127.0.0.1:7545")
+    );
+    let contract = new web3.eth.Contract(abi);
+    let allAccounts = await web3.eth.getAccounts();
+    let creatorAddress = allAccounts[0];
+    setCreatorAdd(creatorAddress);
+    let deployArgs = [creatorAddress, targetAmt, deadline]; // account, goal, timestamp
+    await contract
+      .deploy({ data: bytecode, arguments: deployArgs })
+      .send({ from: creatorAddress, gas: 3000000 })
+      .on("receipt", (receipt) => {
+        contractAdd = receipt.contractAddress;
+        console.log("Contract Address: ", receipt.contractAddress);
+      });
+
     const unique_id = uuidv4();
     const data = {
       unique_id,
@@ -27,21 +49,10 @@ const Campaigns = () => {
       campaignDesc,
       imgUrl,
       targetAmt,
+      contractAdd,
+      creatorAddress,
     };
     console.log(data);
-
-    const web3 = new Web3(
-      new Web3.providers.HttpProvider("http://127.0.0.1:7545")
-    );
-    let contract = new web3.eth.Contract(abi);
-    console.log(contract.methods, "1");
-    let allAccounts = await web3.eth.getAccounts();
-    let mainAccount = allAccounts[0];
-    let deployArgs = [mainAccount, 10000, deadline]; // account, goal, timestamp
-    contract
-      .deploy({ data: bytecode.object, arguments: deployArgs })
-      .send({ from: mainAccount, gas: 1000000 });
-
     const response = await fetch("http://localhost:3001/createCampaign", {
       method: "POST",
       headers: {
@@ -54,21 +65,10 @@ const Campaigns = () => {
       console.error("Error:", response.statusText);
       return;
     }
-
-    // contract = new web3.eth.Contract(abi);
-    // const contractInstance = contract.at(allAccounts[1]);
-
-    // contractInstance.contribute.send(
-    //   { from: allAccounts[0], value: 1.99 },
-    //   (error, result) => {
-    //     // do something with error checking/result here });
-    //     console.log(result);
-    //   }
-    // );
   };
 
   return (
-    <div className="mb-20">
+    <div className="max-w-2xl mx-auto mb-20">
       <h1 className="text-xl text-center md:text-left md:text-2xl font-bold mb-3">
         Create a new campaign 📢
       </h1>
@@ -87,6 +87,7 @@ const Campaigns = () => {
                 setcampaignName(e.target.value);
               }}
               placeholder="Camera Gear Reimagined"
+              required
             />
           </div>
           <div className="w-full px-3 mb-6">
@@ -103,6 +104,7 @@ const Campaigns = () => {
                 setCampaignDesc(e.target.value);
               }}
               placeholder="Enter details about your new idea....."
+              required
             />
           </div>
           <div className="w-full px-3 mb-6">
@@ -118,6 +120,7 @@ const Campaigns = () => {
                 setDeadline(Math.floor(date.getTime() / 1000));
               }}
               placeholder="1.00 ETH"
+              required
             />
           </div>
           <div className="w-full px-3 mb-6">
@@ -133,6 +136,7 @@ const Campaigns = () => {
                 setImgUrl(e.target.value);
               }}
               placeholder="https://...."
+              required
             />
           </div>
           <div className="w-full px-3 mb-6">
@@ -149,6 +153,29 @@ const Campaigns = () => {
                 setTargetAmt(e.target.value);
               }}
               placeholder="11.99 ETH"
+              required
+            />
+          </div>
+          <div className="w-full px-3 mb-6">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight 
+              focus:outline-none focus:bg-white focus:border-gray-500"
+              id="contractAdd"
+              type="hidden"
+              step="0.01"
+              value={contractAdd}
+              required
+            />
+          </div>
+          <div className="w-full px-3 mb-6">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight 
+              focus:outline-none focus:bg-white focus:border-gray-500"
+              id="creatorAddress"
+              type="hidden"
+              step="0.01"
+              value={creatorAddress}
+              required
             />
           </div>
           <div className="flex justify-center">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Button from "../components/Button";
@@ -6,37 +6,50 @@ import Web3 from "web3";
 import { ABI } from "../../../contract/ABI.js";
 import { BYTECODE } from "../../../contract/bytecode.js";
 import { ethToRupeeGen } from "../helpers";
+import { AuthContext } from "../context/AuthContext";
 
 const CampaignDetails = () => {
   let { id } = useParams();
   let percent = "45%";
 
+  const [campaign, setCampaign] = useState([]);
+  const { address } = useContext(AuthContext);
+  console.log(address);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/campaign-details/${id}`)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setCampaign(data);
+      });
+  }, []);
+
   // contract code
   const abi = ABI;
   const bytecode = BYTECODE;
-
   const [contributeAmt, setContributeAmt] = useState(null);
 
-  const handleSubmit = async (e) => {
+  const handleContribute = async (e) => {
     e.preventDefault();
-
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://127.0.0.1:7545")
     );
-    const contract = new web3.eth.Contract(
-      abi,
-      "0x0CA2b1f582dc9cb0ecDe33878b7e6a5d38236Ae8"
-    );
-    const accounts = await web3.eth.getAccounts();
-    const mainAccount = accounts[0];
+    const contract = new web3.eth.Contract(abi, campaign.contractadd);
+    // await contract.methods.goal.call((err, res) => {
+    //   console.log(`Goal: ${web3.utils.fromWei(res, "ether")} ETH`);
+    // });
+    console.log(contract.methods.goal.call().call());
 
+    const accounts = await web3.eth.getAccounts();
+    const mainAccount = accounts[1];
     const value = web3.utils.toWei(contributeAmt, "ether");
     const txObject = {
       from: mainAccount,
-      to: "0x0CA2b1f582dc9cb0ecDe33878b7e6a5d38236Ae8",
+      to: campaign.contractadd,
       value: value,
     };
-
     try {
       const tx = await contract.methods.contribute().send(txObject);
       console.log(tx);
@@ -52,18 +65,13 @@ const CampaignDetails = () => {
     const web3 = new Web3(
       new Web3.providers.HttpProvider("http://127.0.0.1:7545")
     );
-    const contract = new web3.eth.Contract(
-      abi,
-      "0xE8D3BE25b770e03797569715A745ab4Cb8877338"
-    );
+    const contract = new web3.eth.Contract(abi, campaign.contractadd);
     const accounts = await web3.eth.getAccounts();
-    const mainAccount = accounts[0];
-
+    const mainAccount = accounts[1];
     const txObject = {
-      from: "0xE8D3BE25b770e03797569715A745ab4Cb8877338",
-      to: "0x8B507FA134aec4920Ec89d030d8e478dc781643F",
+      from: campaign.contractadd,
+      to: mainAccount,
     };
-
     try {
       const tx = await contract.methods.refund().send(txObject);
       console.log(tx);
@@ -75,17 +83,11 @@ const CampaignDetails = () => {
   return (
     <div className="grid grid-cols-2 gap-12 my-20">
       <div>
+        <Button name="Approve Request by Investors" />
         <h1 className="text-xl text-center md:text-left md:text-4xl font-bold mb-3">
-          Campaign Title - {id}
+          {campaign.campaignname}
         </h1>
-        <p className="mb-3 text-slate-500">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero
-          consequatur sit, doloremque debitis dicta quaerat tempora voluptatibus
-          sed tempore. Labore eveniet molestias enim praesentium libero dolorem,
-          voluptates obcaecati quasi esse, modi, voluptatum quia dolores
-          eligendi! Molestiae aperiam reiciendis suscipit quod, voluptas in
-          soluta nostrum dicta tempore minima fugit, et dolorum!
-        </p>
+        <p className="mb-3 text-slate-500">{campaign.campaigndesc}</p>
         {/* <Link to="#">View on Test Network</Link> */}
         {/* donation tracker */}
         <div className="mt-5">
@@ -93,12 +95,27 @@ const CampaignDetails = () => {
           <h1 className="text-xl font-bold">
             3.12 ETH <small>(Rs. {ethToRupeeGen(3.12)})</small>
           </h1>
-          <p>target of 100 ETH (Rs. {ethToRupeeGen(100)})</p>
+          <p>
+            target of {campaign.targetamt} ETH (Rs.{" "}
+            {ethToRupeeGen(campaign.targetamt)})
+          </p>
           <div className="w-full mt-2 bg-gray-200 rounded-full h-2.5 dark:bg-slate-100">
             <div
               className="bg-teal-600 h-2.5 rounded-full"
               style={{ width: percent }}
             ></div>
+            <div className="mt-5">
+              {/* {address == campaign.creatoraddress ? ( */}
+              <Link
+                to={"/withdrawal-requests/" + campaign.unique_id}
+                className="hidden md:block"
+              >
+                <Button name="Campaign Dashboard (for manager)" />
+              </Link>
+              {/* ) : ( */}
+              {/* "" */}
+              {/* )} */}
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +125,7 @@ const CampaignDetails = () => {
           <div className="px-6 py-4">
             <div className="font-bold text-xl">Contribute Now</div>
             <small>Amount in Ether you wish to contribute</small>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleContribute}>
               <div className="w-full">
                 <input
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight 
@@ -129,11 +146,14 @@ const CampaignDetails = () => {
           </div>
         </div>
         {/* refund */}
-        <div className="mt-5 rounded overflow-hidden shadow-md">
+        <div
+          className="mt-5 rounded overflow-hidden shadow-md"
+          onClick={handleRefund}
+        >
           <div className="px-6 py-4">
             <div className="font-bold text-xl">Request refund</div>
             <div className="mt-2">
-              <Button name="Refund" onClick={handleRefund} />
+              <Button name="Refund" />
             </div>
           </div>
         </div>

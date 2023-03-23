@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import CampaignCard from "./CampaignCard";
 
@@ -8,10 +7,10 @@ const CampaignSection = () => {
   useEffect(() => {
     fetch("http://localhost:3001")
       .then((res) => {
-        return res.text();
+        return res.json();
       })
       .then((data) => {
-        setCampaigns(JSON.parse(data));
+        setCampaigns(data);
       });
   }, []);
 

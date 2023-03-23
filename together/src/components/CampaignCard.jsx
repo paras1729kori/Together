@@ -9,19 +9,17 @@ const CampaignCard = (props) => {
 
   return (
     <div>
-      <Link to={"/campaign-details/" + item.id}>
+      <Link to={"/campaign-details/" + item.unique_id}>
         <div className="rounded overflow-hidden shadow-lg">
           <img
             className="w-full"
-            src={campaignImg}
+            src={item.imgurl}
             alt="Sunset in the mountains"
           />
           <div className="px-6 py-4">
-            <div className="font-bold text-md">
-              Campaign {item.campaignname}
-            </div>
+            <div className="font-bold text-md">{item.campaignname}</div>
             <div className="font-bold mb-2">
-              by <small>{item.campaignToAddress}</small>
+              by <small>{item.contractAdd}</small>
             </div>
             <div className="">
               <p className="text-gray-700 text-xs font-bold">

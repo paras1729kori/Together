@@ -1,3 +1,3 @@
 export const ethToRupeeGen = (eth) => {
-  return (132637.29 * eth).toFixed(4);
+  return (147787.66 * eth).toFixed(4);
 };
